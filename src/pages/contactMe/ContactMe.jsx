@@ -1,6 +1,7 @@
 import emailjs from "emailjs-com";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SectionTitle from "../../Components/SectionTitle";
 
 const ContactMe = () => {
   const sendEmail = (e) => {
@@ -41,9 +42,13 @@ const ContactMe = () => {
 
   return (
     <div className="mt-5 container mx-auto">
+      <SectionTitle
+        heading="Get in Touch"
+        subHeading="Fill in the form below to start a conversation"
+      />
       <h1 className="text-center my-10 font-bold text-3xl ">Message Me</h1>
       <section className="py-6 mt-5 bg-gray-200 dark:text-gray-900 rounded-xl">
-        <div className="grid max-w-6xl grid-cols-1 px-6 mx-auto lg:px-8 md:grid-cols-2 md:divide-x">
+        <div className="grid max-w-6xl grid-cols-1 px-0 mx-auto lg:px-8 md:grid-cols-2 md:divide-x">
           <div className="items-center justify-center p-12">
             <h1 className="text-4xl font-bold">Get in touch</h1>
             <p className="pt-2 pb-4">

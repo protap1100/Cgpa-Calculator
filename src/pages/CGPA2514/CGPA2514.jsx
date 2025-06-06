@@ -1,6 +1,7 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import SectionTitle from "../../Components/SectionTitle";
 
 const gradeMapping = [
   { min: 80, max: 100, grade: "A+", point: 4.0 },
@@ -116,7 +117,7 @@ export default function FixedSemesterCGPACalculator() {
 
     doc.setFontSize(12);
     if (name) doc.text(`Name: ${name}`, 14, 30);
-    if (id) doc.text(`ID: ${id}`, 14, roll ? 36 : 30);
+    if (id) doc.text(`ID: ${id}`, 14, id ? 36 : 30);
 
     const startY = name && id ? 42 : name || id ? 36 : 30;
 
@@ -136,140 +137,147 @@ export default function FixedSemesterCGPACalculator() {
       startY: startY,
     });
 
-    doc.save("CGPA_Report_2514_CSE.pdf");
+    doc.save(`CGPA_Report_2514_CSE_${id ? id : ""}.pdf`);
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-4 sm:p-6 bg-white shadow rounded">
-      <h1 className="text-2xl sm:text-3xl font-bold text-orange-500 mb-6 text-center">
-        📚 Calculate Your CGPA – 2514 CSE Batch (1st Semester Only)
-      </h1>
-      <p className="text-lg text-center my-5">
-        This tool is specially designed only for the 2514 CSE batch, based on
-        the specific courses offered in the 1st semester.("Adding your Name and
-        Roll is optional — but including them makes your PDF report more
-        personalized and professional!")
-      </p>
+    <div>
+      <div className="max-w-8xl mx-auto mt-8 p-4 sm:p-6 bg-white shadow rounded">
+        <SectionTitle
+          heading="Batch 2514 – Simplified CGPA Calculator"
+          subHeading={`This tool is specially designed only for the 2514 CSE batch, based on
+          the specific courses offered in the 1st semester.("Adding your Name
+          and Roll is optional — but including them makes your PDF report more
+          personalized and professional!")`}
+        />
+        <p className="text-lg text-center my-5"></p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div>
-          <label className="block mb-1 font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your Name (optional)"
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block mb-1 font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your Name (optional)"
+              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium text-gray-700">ID</label>
+            <input
+              type="text"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              placeholder="Enter your ID (optional)"
+              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
         </div>
-        <div>
-          <label className="block mb-1 font-medium text-gray-700">ID</label>
-          <input
-            type="text"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            placeholder="Enter your ID (optional)"
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-        </div>
-      </div>
 
-      {data.map((item, idx) => (
-        <div key={idx} className="mb-6 border-b pb-4">
-          <h2 className="text-lg sm:text-xl font-semibold mb-2">
-            {item.name} <span className="text-sm">({item.credits} Credit)</span>
-          </h2>
+        {data.map((item, idx) => (
+          <div key={idx} className="mb-6 border-b pb-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2">
+              {item.name}{" "}
+              <span className="text-sm">({item.credits} Credit)</span>
+            </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-            {["Physics-1 Lab", "Computer Fundamentals Lab"].includes(
-              item.name
-            ) ? (
-              <input
-                type="number"
-                value={item.totalInput}
-                onChange={(e) =>
-                  handleChange(idx, "totalInput", e.target.value)
-                }
-                placeholder="Total Mark (0-100)"
-                min="0"
-                max="100"
-                className="border border-gray-200 p-2 rounded w-full"
-              />
-            ) : (
-              <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+              {["Physics-1 Lab", "Computer Fundamentals Lab"].includes(
+                item.name
+              ) ? (
                 <input
                   type="number"
-                  value={item.ct1}
-                  onChange={(e) => handleChange(idx, "ct1", e.target.value)}
-                  placeholder="CT1 (10)"
-                  className="border border-gray-200 p-2 rounded w-full"
-                />
-                <input
-                  type="number"
-                  value={item.ct2}
-                  onChange={(e) => handleChange(idx, "ct2", e.target.value)}
-                  placeholder="CT2 (10)"
-                  className="border border-gray-200 p-2 rounded w-full"
-                />
-                <input
-                  type="number"
-                  value={item.mid}
-                  onChange={(e) => handleChange(idx, "mid", e.target.value)}
-                  placeholder="Mid (30)"
-                  className="border border-gray-200 p-2 rounded w-full"
-                />
-                <input
-                  type="number"
-                  value={item.final}
-                  onChange={(e) => handleChange(idx, "final", e.target.value)}
-                  placeholder="Final (40)"
-                  className="border border-gray-200 p-2 rounded w-full"
-                />
-                <input
-                  type="number"
-                  value={item.attendance}
+                  value={item.totalInput}
                   onChange={(e) =>
-                    handleChange(idx, "attendance", e.target.value)
+                    handleChange(idx, "totalInput", e.target.value)
                   }
-                  placeholder="Attendance (10)"
+                  placeholder="Total Mark (0-100)"
+                  min="0"
+                  max="100"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
-              </>
+              ) : (
+                <>
+                  <input
+                    type="number"
+                    value={item.ct1}
+                    min="0"
+                    onChange={(e) => handleChange(idx, "ct1", e.target.value)}
+                    placeholder="CT1 (10)"
+                    className="border border-gray-200 p-2 rounded w-full"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={item.ct2}
+                    onChange={(e) => handleChange(idx, "ct2", e.target.value)}
+                    placeholder="CT2 (10)"
+                    className="border border-gray-200 p-2 rounded w-full"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={item.mid}
+                    onChange={(e) => handleChange(idx, "mid", e.target.value)}
+                    placeholder="Mid (30)"
+                    className="border border-gray-200 p-2 rounded w-full"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={item.final}
+                    onChange={(e) => handleChange(idx, "final", e.target.value)}
+                    placeholder="Final (40)"
+                    className="border border-gray-200 p-2 rounded w-full"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={item.attendance}
+                    onChange={(e) =>
+                      handleChange(idx, "attendance", e.target.value)
+                    }
+                    placeholder="Attendance (10)"
+                    className="border border-gray-200 p-2 rounded w-full"
+                  />
+                </>
+              )}
+            </div>
+
+            {item.total !== undefined && (
+              <p className="mt-2 text-sm text-gray-600">
+                Total: <span className="font-medium">{item.total}</span> |
+                Grade: <span className="font-medium">{item.grade}</span> |
+                Point: <span className="font-medium">{item.point}</span>
+              </p>
             )}
           </div>
+        ))}
 
-          {item.total !== undefined && (
-            <p className="mt-2 text-sm text-gray-600">
-              Total: <span className="font-medium">{item.total}</span> | Grade:{" "}
-              <span className="font-medium">{item.grade}</span> | Point:{" "}
-              <span className="font-medium">{item.point}</span>
-            </p>
+        <div className="text-center flex gap-2 flex-col lg:flex-row lg:justify-center lg:items-center">
+          <button
+            onClick={handleCalculate}
+            className="bg-orange-500 text-white px-6 py-2 mt-4 rounded font-semibold hover:bg-orange-600 transition cursor-pointer"
+          >
+            🎓 Calculate CGPA
+          </button>
+
+          {isCalculated && (
+            <button
+              onClick={handleDownloadPDF}
+              className="bg-blue-500 text-white px-6 py-2 mt-4 rounded font-semibold hover:bg-blue-600 transition cursor-pointer"
+            >
+              📄 Download PDF
+            </button>
+          )}
+
+          {isCalculated && (
+            <div className="text-xl font-semibold mt-6">
+              Total CGPA: <span className="text-black">{cgpa}</span>
+            </div>
           )}
         </div>
-      ))}
-
-      <div className="text-center">
-        <button
-          onClick={handleCalculate}
-          className="bg-orange-500 text-white px-6 py-2 mt-4 rounded font-semibold hover:bg-orange-600 transition cursor-pointer"
-        >
-          🎓 Calculate CGPA
-        </button>
-
-        {isCalculated && (
-          <button
-            onClick={handleDownloadPDF}
-            className="bg-blue-500 text-white px-6 py-2 mt-4 ml-4 rounded font-semibold hover:bg-blue-600 transition cursor-pointer"
-          >
-            📄 Download PDF
-          </button>
-        )}
-
-        {isCalculated && (
-          <div className="text-xl font-semibold mt-6">
-            Total CGPA: <span className="text-black">{cgpa}</span>
-          </div>
-        )}
       </div>
     </div>
   );

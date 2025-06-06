@@ -1,7 +1,11 @@
+import Batch2514Feature from "../../Components/Batch2514Feature";
+import GradingSystem from "../../Components/GradingSystem";
+
 const Home = () => {
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold">Welcome to the Home Page!</h2>
+      <Batch2514Feature></Batch2514Feature>
+      <GradingSystem></GradingSystem>
     </div>
   );
 };
