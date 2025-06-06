@@ -13,29 +13,60 @@ const gradeOptions = [
   { label: "F", point: 0.0 },
 ];
 
+const getGradeFromMarks = (marks) => {
+  const m = parseFloat(marks);
+  if (isNaN(m)) return "";
+  if (m >= 80) return "A+";
+  if (m >= 75) return "A";
+  if (m >= 70) return "A-";
+  if (m >= 65) return "B+";
+  if (m >= 60) return "B";
+  if (m >= 55) return "B-";
+  if (m >= 50) return "C+";
+  if (m >= 45) return "C";
+  if (m >= 40) return "D";
+  return "F";
+};
+
 const SubjectRow = ({ subject, onChange, onRemove }) => {
+  const handleMarksChange = (e) => {
+    const marks = e.target.value;
+    const grade = getGradeFromMarks(marks);
+    onChange("marks", marks);
+    onChange("grade", grade);
+  };
+
   return (
     <div className="relative border border-gray-200 rounded-lg p-3 mb-3 shadow-sm">
       <button
         onClick={onRemove}
-        className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg"
+        className="absolute top-3 right-2 px-4 py-2 border border-orange-400 text-orange-500 rounded-lg hover:bg-orange-50 text-sm font-medium transition cursor-pointer"
       >
-        ✖
+        <h1 className="lg:inline hidden">Remove Subject</h1> ✖
       </button>
+
       <div className="mb-2">
         <input
           type="text"
           placeholder="Subject Name"
           value={subject.name}
           onChange={(e) => onChange("name", e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+          className="w-3/4 border border-gray-300 rounded-md px-3 py-2 text-sm"
         />
-      </div> 
-      <div className="flex gap-2">
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <input
+          type="number"
+          placeholder="Marks"
+          value={subject.marks || ""}
+          onChange={handleMarksChange}
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+        />
         <select
           value={subject.grade}
           onChange={(e) => onChange("grade", e.target.value)}
-          className="w-1/2 border border-gray-300 rounded-md px-3 py-2 text-sm"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
         >
           <option value="">Grade</option>
           {gradeOptions.map((g) => (
@@ -49,7 +80,7 @@ const SubjectRow = ({ subject, onChange, onRemove }) => {
           placeholder="Credits"
           value={subject.credits}
           onChange={(e) => onChange("credits", e.target.value)}
-          className="w-1/2 border border-gray-300 rounded-md px-3 py-2 text-sm"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
         />
       </div>
     </div>
@@ -66,7 +97,10 @@ const Semester = ({ semester, index, updateSemester, removeSemester }) => {
   const addSubject = () => {
     updateSemester(index, {
       ...semester,
-      subjects: [...semester.subjects, { name: "", grade: "", credits: "" }],
+      subjects: [
+        ...semester.subjects,
+        { name: "", grade: "", credits: "", marks: "" },
+      ],
     });
   };
 
@@ -120,7 +154,7 @@ const Semester = ({ semester, index, updateSemester, removeSemester }) => {
         </p>
         <button
           onClick={addSubject}
-          className="px-4 py-1.5 border border-orange-400 text-orange-500 rounded-full hover:bg-orange-50 text-sm font-medium transition"
+          className="px-4 py-1.5 border border-orange-400 text-orange-500 rounded-lg hover:bg-orange-50 text-sm font-medium transition cursor-pointer"
         >
           ADD SUBJECT
         </button>
@@ -131,7 +165,7 @@ const Semester = ({ semester, index, updateSemester, removeSemester }) => {
 
 export default function CGPACalculator() {
   const [semesters, setSemesters] = useState([
-    { subjects: [{ name: "", grade: "", credits: "" }] },
+    { subjects: [{ name: "", grade: "", credits: "", marks: "" }] },
   ]);
 
   const updateSemester = (index, updatedSemester) => {
@@ -143,7 +177,7 @@ export default function CGPACalculator() {
   const addSemester = () => {
     setSemesters([
       ...semesters,
-      { subjects: [{ name: "", grade: "", credits: "" }] },
+      { subjects: [{ name: "", grade: "", credits: "", marks: "" }] },
     ]);
   };
 
@@ -184,7 +218,7 @@ export default function CGPACalculator() {
       <div className="flex flex-wrap justify-between items-center border-t pt-6 mt-4">
         <button
           onClick={addSemester}
-          className="px-5 py-2 border border-orange-400 text-orange-500 rounded-full hover:bg-orange-50 transition text-sm font-semibold"
+          className="px-5 py-2 border border-orange-400 text-orange-500 rounded-lg hover:bg-orange-50 transition text-sm font-semibold"
         >
           ADD NEXT SEMESTER
         </button>
