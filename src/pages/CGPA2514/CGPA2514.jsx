@@ -108,7 +108,9 @@ export default function FixedSemesterCGPACalculator() {
       <h1 className="text-2xl sm:text-3xl font-bold text-orange-500 mb-6 text-center">
         📚 2514 Semester CGPA
       </h1>
-      <h1 className="text-lg text-center my-5">Calculate You CGPA by entering you mark</h1>
+      <h1 className="text-lg text-center my-5">
+        Calculate You CGPA by entering you mark
+      </h1>
 
       {data.map((item, idx) => (
         <div key={idx} className="mb-6 border-b pb-4">
@@ -129,7 +131,7 @@ export default function FixedSemesterCGPACalculator() {
                 placeholder="Total Mark (0-100)"
                 min="0"
                 max="100"
-                className="border p-2 rounded w-full"
+                className="border border-gray-200 p-2 rounded w-full"
               />
             ) : (
               <>
@@ -140,7 +142,7 @@ export default function FixedSemesterCGPACalculator() {
                   placeholder="CT1 (10)"
                   min="0"
                   max="10"
-                  className="border p-2 rounded w-full"
+                  className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
                   type="number"
@@ -149,7 +151,7 @@ export default function FixedSemesterCGPACalculator() {
                   placeholder="CT2 (10)"
                   min="0"
                   max="10"
-                  className="border p-2 rounded w-full"
+                  className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
                   type="number"
@@ -158,7 +160,7 @@ export default function FixedSemesterCGPACalculator() {
                   placeholder="Mid (30)"
                   min="0"
                   max="30"
-                  className="border p-2 rounded w-full"
+                  className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
                   type="number"
@@ -167,7 +169,7 @@ export default function FixedSemesterCGPACalculator() {
                   placeholder="Final (40)"
                   min="0"
                   max="40"
-                  className="border p-2 rounded w-full"
+                  className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
                   type="number"
@@ -178,7 +180,7 @@ export default function FixedSemesterCGPACalculator() {
                   placeholder="Attendance (10)"
                   min="0"
                   max="10"
-                  className="border p-2 rounded w-full"
+                  className="border border-gray-200 p-2 rounded w-full"
                 />
               </>
             )}
