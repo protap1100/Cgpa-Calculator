@@ -1,4 +1,6 @@
 import { useState } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const gradeMapping = [
   { min: 80, max: 100, grade: "A+", point: 4.0 },
@@ -48,6 +50,9 @@ export default function FixedSemesterCGPACalculator() {
   );
 
   const [cgpa, setCGPA] = useState("0.00");
+  const [name, setName] = useState("");
+  const [id, setId] = useState("");
+  const [isCalculated, setIsCalculated] = useState(false);
 
   const handleChange = (index, field, value) => {
     const maxLimits = {
@@ -101,16 +106,73 @@ export default function FixedSemesterCGPACalculator() {
 
     setData(updatedData);
     setCGPA(totalCredits ? (totalPoints / totalCredits).toFixed(2) : "0.00");
+    setIsCalculated(true);
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("CGPA Report – 2514 CSE Batch (1st Semester)", 14, 20);
+
+    doc.setFontSize(12);
+    if (name) doc.text(`Name: ${name}`, 14, 30);
+    if (id) doc.text(`ID: ${id}`, 14, roll ? 36 : 30);
+
+    const startY = name && id ? 42 : name || id ? 36 : 30;
+
+    const tableColumn = ["Subject", "Total Mark", "Grade", "Point"];
+    const tableRows = [];
+
+    data.forEach((item) => {
+      const row = [item.name, item.total, item.grade, item.point.toFixed(0)];
+      tableRows.push(row);
+    });
+
+    tableRows.push(["", "", "Total CGPA", cgpa]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: startY,
+    });
+
+    doc.save("CGPA_Report_2514_CSE.pdf");
   };
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4 sm:p-6 bg-white shadow rounded">
       <h1 className="text-2xl sm:text-3xl font-bold text-orange-500 mb-6 text-center">
-        📚 2514 Semester CGPA
+        📚 Calculate Your CGPA – 2514 CSE Batch (1st Semester Only)
       </h1>
-      <h1 className="text-lg text-center my-5">
-        Calculate You CGPA by entering you mark
-      </h1>
+      <p className="text-lg text-center my-5">
+        This tool is specially designed only for the 2514 CSE batch, based on
+        the specific courses offered in the 1st semester.("Adding your Name and
+        Roll is optional — but including them makes your PDF report more
+        personalized and professional!")
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label className="block mb-1 font-medium text-gray-700">Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your Name (optional)"
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-medium text-gray-700">ID</label>
+          <input
+            type="text"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            placeholder="Enter your ID (optional)"
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+        </div>
+      </div>
 
       {data.map((item, idx) => (
         <div key={idx} className="mb-6 border-b pb-4">
@@ -140,8 +202,6 @@ export default function FixedSemesterCGPACalculator() {
                   value={item.ct1}
                   onChange={(e) => handleChange(idx, "ct1", e.target.value)}
                   placeholder="CT1 (10)"
-                  min="0"
-                  max="10"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
@@ -149,8 +209,6 @@ export default function FixedSemesterCGPACalculator() {
                   value={item.ct2}
                   onChange={(e) => handleChange(idx, "ct2", e.target.value)}
                   placeholder="CT2 (10)"
-                  min="0"
-                  max="10"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
@@ -158,8 +216,6 @@ export default function FixedSemesterCGPACalculator() {
                   value={item.mid}
                   onChange={(e) => handleChange(idx, "mid", e.target.value)}
                   placeholder="Mid (30)"
-                  min="0"
-                  max="30"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
@@ -167,8 +223,6 @@ export default function FixedSemesterCGPACalculator() {
                   value={item.final}
                   onChange={(e) => handleChange(idx, "final", e.target.value)}
                   placeholder="Final (40)"
-                  min="0"
-                  max="40"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
                 <input
@@ -178,8 +232,6 @@ export default function FixedSemesterCGPACalculator() {
                     handleChange(idx, "attendance", e.target.value)
                   }
                   placeholder="Attendance (10)"
-                  min="0"
-                  max="10"
                   className="border border-gray-200 p-2 rounded w-full"
                 />
               </>
@@ -199,14 +251,25 @@ export default function FixedSemesterCGPACalculator() {
       <div className="text-center">
         <button
           onClick={handleCalculate}
-          className="bg-orange-500 text-white px-6 py-2 mt-4 rounded font-semibold hover:bg-orange-600 transition"
+          className="bg-orange-500 text-white px-6 py-2 mt-4 rounded font-semibold hover:bg-orange-600 transition cursor-pointer"
         >
           🎓 Calculate CGPA
         </button>
 
-        <div className="text-xl font-semibold mt-6">
-          Total CGPA: <span className="text-black">{cgpa}</span>
-        </div>
+        {isCalculated && (
+          <button
+            onClick={handleDownloadPDF}
+            className="bg-blue-500 text-white px-6 py-2 mt-4 ml-4 rounded font-semibold hover:bg-blue-600 transition cursor-pointer"
+          >
+            📄 Download PDF
+          </button>
+        )}
+
+        {isCalculated && (
+          <div className="text-xl font-semibold mt-6">
+            Total CGPA: <span className="text-black">{cgpa}</span>
+          </div>
+        )}
       </div>
     </div>
   );
