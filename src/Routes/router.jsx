@@ -3,6 +3,8 @@ import MainPage from "../pages/main/MainPage";
 import Home from "../pages/home/Home";
 import ErrorElement from "../pages/errorElement/ErrorElement";
 import ContactMe from "../pages/contactMe/ContactMe";
+import CGPACalculator from "../pages/CGPACalculator/CGPACalculator";
+import CGPA2514 from "../pages/CGPA2514/CGPA2514.JSX";
 
 export const router = createBrowserRouter([
   {
@@ -19,9 +21,13 @@ export const router = createBrowserRouter([
         element: <ContactMe></ContactMe>,
       },
       {
-        path : "/cgpa",
-        element: <Home></Home>,
+        path: "/cgpa",
+        element: <CGPACalculator></CGPACalculator>,
       },
+      {
+        path: '/2514-CGPA',
+        element: <CGPA2514></CGPA2514>
+      }
     ],
   },
 ]);
